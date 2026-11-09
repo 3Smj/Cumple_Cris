@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños!</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #ffe4e1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.5s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Contenedor Principal */
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+
+        h1 {
+            color: #ff477e;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            transition: color 0.5s ease;
+        }
+
+        /* Botones de respuesta */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        .btn-si {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .btn-no {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-reiniciar {
+            background-color: #7f8c8d;
+            color: white;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            padding: 8px 20px;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Estado Oculto */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Escenario de Teatro */
+        .escenario {
+            position: relative;
+            background: radial-gradient(circle, #f9f9f9 0%, #e3e3e3 100%);
+            border: 6px solid #b38f56;
+            border-radius: 12px;
+            padding: 30px 20px;
+            margin-top: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.15), 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Cortinas reales con pliegues y sombras */
+        .escenario::before, .escenario::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            width: 52%; 
+            height: 110%;
+            z-index: 2;
+            /* SE CAMBIÓ A 3 SEGUNDOS PARA UNA APERTURA MÁS LENTA */
+            transition: transform 3s cubic-bezier(0.25, 1, 0.5, 1);
+            
+            background: repeating-linear-gradient(
+                90deg,
+                #800000 0px,
+                #a30000 15px,
+                #b80000 25px,
+                #a30000 35px,
+                #800000 50px
+            );
+            
+            border-bottom: 5px solid #ffd700;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.4);
+        }
+        
+        .escenario::before { 
+            left: 0; 
+            transform-origin: left top;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.4);
+        }
+        .escenario::after { 
+            right: 0; 
+            transform-origin: right top;
+            box-shadow: -4px 0 10px rgba(0,0,0,0.4);
+        }
+
+        /* Efecto de apertura de cortinas */
+        .escenario.abierto::before { transform: scaleX(0) translateX(-20px); }
+        .escenario.abierto::after { transform: scaleX(0) translateX(20px); }
+
+        /* Recuadro de la foto */
+        .foto-marco {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            border: 8px solid #ffd700;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.6);
+            overflow: hidden;
+            background: #fff;
+            position: relative;
+            z-index: 1;
+            transform: scale(0.9);
+            /* SE AJUSTÓ EL DELAY A 1.5s PARA ACOPLARSE A LAS CORTINAS */
+            transition: transform 1s ease 1.5s;
+        }
+
+        .escenario.abierto .foto-marco {
+            transform: scale(1);
+        }
+
+        .foto-marco img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Foco de luz blanca */
+        .foco {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 75%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Estilos de Tristeza */
+        body.triste { background-color: #2c3e50; }
+        .card.triste-card { background-color: #34495e; color: #ecf0f1; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .card.triste-card h1 { color: #3498db; }
+        .carita-triste { font-size: 3rem; margin-top: 15px; animation: flotar 2s ease-in-out infinite; }
+
+        @keyframes flotar {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* CSS para el Confeti */
+        .confeti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            z-index: 1;
+            top: -10px;
+            border-radius: 2px;
+            animation: caer linear forwards;
+        }
+
+        @keyframes caer {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="musica-cumple" src="audio/feliz-cumpleanos.mp3" preload="auto"></audio>
+
+    <div class="card" id="main-card">
+        <h1 id="pregunta">¿Hoy cumples años?</h1>
+        
+        <div class="btn-container" id="botones-inicio">
+            <button class="btn-si" onclick="responderSi()">Sí</button>
+            <button class="btn-no" onclick="responderNo()">No</button>
+        </div>
+
+        <div id="seccion-triste" class="hidden">
+            <div class="carita-triste">😢</div>
+            <button class="btn-reiniciar" onclick="reiniciar()">Volver a preguntar 🔄</button>
+        </div>
+
+        <div id="seccion-cumple" class="hidden">
+            <div class="escenario" id="teatro">
+                <div class="foco"></div>
+                <div class="foto-marco">
+                    <img src="imagenes/cris.jpg" alt="Cumpleañera">
+                </div>
+            </div>
+            <h2 style="color: #ff477e; margin-top: 15px;">¡Muchas Felicidades! 🎉🎂</h2>
+            <button class="btn-reiniciar" onclick="reiniciar()">Volver a empezar 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        const body = document.body;
+        const tarjeta = document.getElementById('main-card');
+        const pregunta = document.getElementById('pregunta');
+        const botones = document.getElementById('botones-inicio');
+        const seccionTriste = document.getElementById('seccion-triste');
+        const seccionCumple = document.getElementById('seccion-cumple');
+        const teatro = document.getElementById('teatro');
+        const musica = document.getElementById('musica-cumple');
+        let intervaloConfeti;
+
+        function reiniciar() {
+            clearInterval(intervaloConfeti);
+            document.querySelectorAll('.confeti').forEach(p => p.remove());
+            musica.pause();
+            musica.currentTime = 0;
+            body.className = '';
+            tarjeta.className = 'card';
+            pregunta.innerText = "¿Hoy cumples años?";
+            seccionTriste.classList.add('hidden');
+            seccionCumple.classList.add('hidden');
+            teatro.classList.remove('abierto');
+            botones.classList.remove('hidden');
+        }
+
+        function responderNo() {
+            botones.classList.add('hidden');
+            pregunta.innerText = "Qué lástima...";
+            seccionTriste.classList.remove('hidden');
+            body.classList.add('triste');
+            tarjeta.classList.add('triste-card');
+        }
+
+        function responderSi() {
+            botones.classList.add('hidden');
+            pregunta.innerText = "¡FELIZ CUMPLEÁÑOS!";
+            seccionCumple.classList.remove('hidden');            
+            setTimeout(() => { teatro.classList.add('abierto'); }, 300);
+            musica.currentTime = 0; 
+            musica.play().catch(error => { console.log("Interacción requerida."); });
+            lanzarConfetiLocal();
+        }
+
+        function lanzarConfetiLocal() {
+            const colores = ['#ff477e', '#ff1493', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6', '#e67e22'];
+            intervaloConfeti = setInterval(() => {
+                for (let i = 0; i < 5; i++) {
+                    const p = document.createElement('div');
+                    p.classList.add('confeti');
+                    p.style.left = Math.random() * 100 + 'vw';
+                    p.style.backgroundColor = colores[Math.floor(Math.random() * colores.length)];
+                    p.style.width = (Math.random() * 8 + 6) + 'px';
+                    p.style.height = (Math.random() * 12 + 6) + 'px';
+                    p.style.animationDuration = (Math.random() * 2 + 2) + 's'; 
+                    body.appendChild(p);
+                    setTimeout(() => p.remove(), 4000);
+                }
+            }, 60);
+            setTimeout(() => clearInterval(intervaloConfeti), 4000);
+        }
+    </script>
+</body>
+</html>
